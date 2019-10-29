@@ -22,6 +22,10 @@ class FSM_VER_Get:
 class FSM_STATUS_Get:
     pass
 
+@FSM_Get(UBX.CFG.PRT_GET)
+class FSM_PORT_Get:
+    pass
+
 
 @FSM_Get(UBX.MON.PATCH)
 class FSM_PATCH_Get:
@@ -152,6 +156,14 @@ class Manager(UBXManager):
         with self._lock:
             self._fsm = FSM_STATUS_Get()
         self.send(msg)
+    def PORT_GET(self):
+        prt_get = UBX.CFG.PRT_GET(b'\x03')
+        
+        #prt_get.portID=3
+        msg = prt_get.serialize()
+        with self._lock:
+            self._fsm = FSM_PORT_Get()
+        self.send(msg)
     def GNSS_GET(self):
         msg = UBX.CFG.GNSS.Get().serialize()
         with self._lock:
@@ -227,6 +239,10 @@ if __name__ == '__main__':
     parser.add_argument(
         '--STATUS-GET', dest='STATUS_GET', action='store_true',
         help='get a status message'
+        )
+    parser.add_argument(
+        '--PORT-GET', dest='PORT_GET', action='store_true',
+        help='get port info'
         )
     args = parser.parse_args()
 

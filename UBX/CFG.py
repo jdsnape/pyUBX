@@ -118,6 +118,13 @@ class CFG:
                     4: "Continuous Mode"    # for ver>=14 0 and 4 are the same
                     }
             )
+    class PRT_GET:
+        u"""§31.11.22.4 Port Configuration."""
+
+        _id = 0x00
+
+        class Fields:
+            portID      = U1(1)
 
     class PRT:
         u"""§31.11.22.4 Port Configuration."""
@@ -135,13 +142,6 @@ class CFG:
             flags       = X2(8)
             reserved3   = U2(9)
 
-    class PRT_GET:
-        u"""§31.11.22.4 Port Configuration."""
-
-        _id = 0x00
-
-        class Fields:
-            portID      = U1(1)
 
     @addGet
     class TP5:
@@ -165,7 +165,7 @@ class CFG:
     class TP5_GET:
         u"""§31.11.32.2 Poll Time Pulse Parameters."""
 
-        _id = 0x00
+        _id = 0x31
 
         class Fields:
             tpIdx = U1(1)  # Time pulse selection (0 = TIMEPULSE, 1 = TIMEPULSE2)

@@ -1,7 +1,7 @@
 """Monitoring Messages: Communication Status, CPU Load, Stack Usage, Task Status. """
 
 from UBXMessage import initMessageClass, addGet
-from Types import CH, U1, U2, X1, X4
+from Types import CH, U1, U2, U4, X1, X4
 
 
 @initMessageClass
@@ -20,6 +20,21 @@ class MON:
             hwVersion = CH(2, 10, nullTerminatedString=True)
             class Repeated:
                 extension = CH(1, 30, nullTerminatedString=True)
+
+
+    @addGet
+    class PATCH:
+
+        _id=0x27
+
+        class Fields:
+            version = U2(1) # Type of the message
+            nEntries = U2(2) # The number of patches
+            class Repeated:
+                patchInfo = X4(1)
+                comparatorNumber = U4(2)
+                patchAddress = U4(3)
+                patchData = U4(4)
 
     @addGet
     class HW:

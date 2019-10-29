@@ -18,6 +18,18 @@ from FSM import *
 class FSM_VER_Get:
     pass
 
+@FSM_Get(UBX.NAV.STATUS)
+class FSM_STATUS_Get:
+    pass
+
+
+@FSM_Get(UBX.MON.PATCH)
+class FSM_PATCH_Get:
+    pass
+
+@FSM_Get(UBX.RXM.RAWX)
+class FSM_RXM_Get:
+    pass
 
 @FSM_Get(UBX.CFG.GNSS)
 class FSM_GNSS_Get:
@@ -125,6 +137,21 @@ class Manager(UBXManager):
         with self._lock:
             self._fsm = FSM_VER_Get()
         self.send(msg)
+    def PATCH_GET(self):
+        msg = UBX.MON.PATCH.Get().serialize()
+        with self._lock:
+            self._fsm = FSM_PATCH_Get()
+        self.send(msg)
+    def RAW_GET(self):
+        msg = UBX.RXM.RAWX.Get().serialize()
+        with self._lock:
+            self._fsm = FSM_RXM_Get()
+        self.send(msg)
+    def STATUS_GET(self):
+        msg = UBX.NAV.STATUS.Get().serialize()
+        with self._lock:
+            self._fsm = FSM_STATUS_Get()
+        self.send(msg)
     def GNSS_GET(self):
         msg = UBX.CFG.GNSS.Get().serialize()
         with self._lock:
@@ -162,6 +189,10 @@ if __name__ == '__main__':
         help='Get the version string'
         )
     parser.add_argument(
+        '--PATCH-GET', dest='PATCH_GET', action='store_true',
+        help='Get patch information'
+        )
+    parser.add_argument(
         '--GNSS-GET', dest='GNSS_GET', action='store_true',
         help='Get CFG-GNSS'
         )
@@ -189,9 +220,17 @@ if __name__ == '__main__':
         '-d', '--debug', dest='debug', action='store_true',
         help='Turn on debug mode'
         )
+    parser.add_argument(
+        '--RAW-GET', dest='RAW_GET', action='store_true',
+        help='get a raw message'
+        )
+    parser.add_argument(
+        '--STATUS-GET', dest='STATUS_GET', action='store_true',
+        help='get a status message'
+        )
     args = parser.parse_args()
 
-    ser = serial.Serial('/dev/ttyAMA0', 9600, timeout=None)
+    ser = serial.Serial('/dev/ttyACM0', 9600, timeout=None)
     debug = (os.environ.get("DEBUG") is not None) or args.debug
 
     manager = Manager(ser, debug=debug)

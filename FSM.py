@@ -37,9 +37,15 @@ def FSM_Get(msgCls):
         setattr(FSMCls, "done", done)
         # 4. function onUBX
         def onUBX(self, obj, manager):
+            # print("msgCls: {}, obj._cls:{}".format(msgCls._class, obj._class))
+            # print(isACK(obj))
             if obj._class == msgCls._class and obj._id == msgCls._id:
-                print(obj)
+                #print(obj)
                 self.state = FSMCls.STATE.DONE
+            # else:
+            #    print("Ignoring")
         setattr(FSMCls, "onUBX", onUBX)
         return FSMCls
     return decorator
+
+

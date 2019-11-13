@@ -4,3 +4,4 @@ from UBX.MON import *
 from UBX.TEST import *
 from UBX.RXM import *
 from UBX.NAV import *
+from UBX.SEC import *

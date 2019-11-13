@@ -118,6 +118,7 @@ class CFG:
                     4: "Continuous Mode"    # for ver>=14 0 and 4 are the same
                     }
             )
+
     class PRT_GET:
         u"""§31.11.22.4 Port Configuration."""
 
@@ -169,3 +170,24 @@ class CFG:
 
         class Fields:
             tpIdx = U1(1)  # Time pulse selection (0 = TIMEPULSE, 1 = TIMEPULSE2)
+
+    @addGet
+    class MSG_GET:
+        _id = 0x01
+        class Fields:
+            msgClass = U1(1)
+            msgID = U1(2)
+
+    class MSG:
+
+        _id = 0x01
+
+        class Fields:
+            msgClass = U1(1)
+            msgID = U1(2)
+            rate_p1 = U1(3)
+            rate_p2 = U1(4)
+            rate_p3 = U1(5)
+            rate_usb = U1(6)
+            rate_p5 = U1(7)
+            rate_p6 = U1(8)

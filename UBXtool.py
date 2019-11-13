@@ -22,6 +22,9 @@ class FSM_VER_Get:
 class FSM_STATUS_Get:
     pass
 
+@FSM_Get(UBX.CFG.MSG)
+class FSM_RAW_Set:
+    pass
 @FSM_Get(UBX.CFG.PRT_GET)
 class FSM_PORT_Get:
     pass
@@ -73,7 +76,7 @@ class FSM_RXM_Set:
     def done(self):
         return self.state == FSM_RXM_Set.STATE.DONE
     def onUBX(self, obj, manager):
-        print(obj)
+        print("Got ubx {}, current state: {}".format(obj.__class__, self.state))
         if self.state == FSM_RXM_Set.STATE.START:
             if isObj(obj, UBX.CFG.RXM):
                 self._gottenObj = obj
@@ -156,6 +159,13 @@ class Manager(UBXManager):
         with self._lock:
             self._fsm = FSM_STATUS_Get()
         self.send(msg)
+    def RAW_SET(self):
+        print("Setting raw")
+        msg = UBX.CFG.MSG(b'\x02\x15\x01')  # .Get().serialize() # This enables the raw messages, once per second. Why was this not a get?
+        with self._lock:
+            self._fsm = FSM_RAW_Set()
+        self.send(msg.serialize())
+
     def PORT_GET(self):
         prt_get = UBX.CFG.PRT_GET(b'\x03')
         
@@ -244,6 +254,10 @@ if __name__ == '__main__':
         '--PORT-GET', dest='PORT_GET', action='store_true',
         help='get port info'
         )
+    parser.add_argument(
+        '--RAW-SET', dest='RAW_SET', action='store_true',
+        help='enable raw messages, once per second'
+        )
     args = parser.parse_args()
 
     ser = serial.Serial('/dev/ttyACM0', 9600, timeout=None)
@@ -259,6 +273,12 @@ if __name__ == '__main__':
 
     # do all getters
     for argName in filter(lambda s: s.endswith("_GET"), args.__dict__.keys()):
+        if args.__dict__[argName]:
+            print(argName)
+            getattr(manager, argName)()
+            manager.waitUntilDone()
+    # do all setters
+    for argName in filter(lambda s: s.endswith("_SET"), args.__dict__.keys()):
         if args.__dict__[argName]:
             getattr(manager, argName)()
             manager.waitUntilDone()

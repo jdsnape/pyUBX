@@ -182,8 +182,6 @@ class UBXManager(threading.Thread):
     def _onUBX(self, msgClass, msgId, buffer):
         from UBXMessage import parseUBXPayload, formatByteString
         try:
-            if self.debug:
-                print('onUBX:{}:{}:{}'.format(msgClass, msgId, formatByteString(buffer)))
             obj = parseUBXPayload(msgClass, msgId, buffer)
         except Exception as e:
             errMsg = "No parse, \"{}\", payload={}".format(
